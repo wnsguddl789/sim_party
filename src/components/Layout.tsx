@@ -35,10 +35,8 @@ const LayoutContainer = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #fafafa;
-  position: absolute;
-  top: 60;
-  width: 100vw;
-  height: 100vh;
+  max-width: 100vw;
+  min-height: 100vh;
   .header {
     display: flex;
     justify-content: center;
@@ -83,6 +81,7 @@ const LayoutContainer = styled.div`
     padding: 30px 20px;
     display: flex;
     justify-content: center;
+
     .main-wrapper {
       width: 100%;
       @media (min-width: 599px) {

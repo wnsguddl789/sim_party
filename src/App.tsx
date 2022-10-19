@@ -1,9 +1,15 @@
-import { useState, useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import axios from 'axios';
 
-import { MAIN_PATH } from './constants/route-constant';
+import { API_URL, MAIN_PATH } from './constants';
 
 import MainPage from './pages/MainPage';
+
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
+axios.defaults.baseURL = API_URL;
 
 const Pages = [
   {

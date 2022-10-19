@@ -2,10 +2,12 @@ import styled from '@emotion/styled';
 
 interface Props {
   imageSource: string;
+  onClick: (id: string) => void;
+  value: string;
 }
-export const Card = ({ imageSource }: Props) => {
+export const Card = ({ imageSource, onClick, value }: Props) => {
   return (
-    <CardStyle>
+    <CardStyle onClick={() => onClick(value)}>
       <img src={imageSource} />
     </CardStyle>
   );
@@ -15,7 +17,7 @@ const CardStyle = styled.div`
   display: flex;
 
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
   justify-content: center;
   align-items: center;
   background-color: #ffffff;
