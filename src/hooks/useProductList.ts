@@ -1,21 +1,25 @@
 import { useQuery } from '@tanstack/react-query';
 
 import axios from 'axios';
+import axiosInstance from '../utils/api';
 
-interface Params {
-  page?: number;
-  size?: number;
-  name?: string;
-  category?: string;
+import { usePaginationStore } from './usePagination';
+interface Product {
+  cloName: string;
+  thumbnailPath: string;
 }
 
-export const useProductList = ({ page = 1, size = 30, name = '', category = '' }: Params) => {
-  const fetchProductList = async () => {
-    return await axios
-      .get(`${'http://43.201.111.37:8216/simparty'}/main`, { params: { page, size, name, category } })
+export const useProductList = () => {
+  const { page, size, name, category } = usePaginationStore();
+  const fetchProductList = async () =>
+    axiosInstance({
+      method: 'get',
+      url: '/main',
+      params: { page, size, name, category },
+    })
       .then((response) => response)
       .catch((error) => error);
-  };
-  const result = useQuery(['productList'], fetchProductList);
-  return result;
+
+  const { error, isLoading, data: productList, refetch } = useQuery<Product[]>(['productList'], () => fetchProductList());
+  return { error, isLoading, productList, refetch };
 };

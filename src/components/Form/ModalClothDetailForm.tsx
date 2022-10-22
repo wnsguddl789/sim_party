@@ -1,9 +1,36 @@
-import type { Detail } from '../../types';
+import { Spinner } from '../atoms';
 interface Props {
-  dataSource: Detail | null | undefined;
+  id: string;
 }
 import { Typography } from '../atoms';
 import styled from '@emotion/styled';
+
+import { useProductDetail } from '../../hooks';
+
+export const ModalClothDetailForm = ({ id }: Props) => {
+  const { error, isLoading, product } = useProductDetail(id);
+
+  return isLoading ? (
+    <Spinner></Spinner>
+  ) : (
+    <Form.Wrapper>
+      <Form.Header>
+        <Typography size="16">{product?.cloName}</Typography>
+        <Typography size="16">{product?.cloSize}</Typography>
+      </Form.Header>
+      <Form.ImageWrapper>
+        <Form.Image src={product?.imagePath} />
+      </Form.ImageWrapper>
+      <Form.BookingList>
+        <Typography size="12">예약상황</Typography>
+        <Form.BookingItem fontSize="12">{product?.bookingList?.currentBooking_1}</Form.BookingItem>
+        <Form.BookingItem fontSize="12">{product?.bookingList?.currentBooking_1}</Form.BookingItem>
+        <Form.BookingItem fontSize="12">{product?.bookingList?.currentBooking_1}</Form.BookingItem>
+        <Typography size="12">외{product?.bookingList?.extraBooking}건</Typography>
+      </Form.BookingList>
+    </Form.Wrapper>
+  );
+};
 
 const Form = {
   Wrapper: styled.div`
@@ -26,25 +53,4 @@ const Form = {
   BookingItem: styled.li<{ fontSize?: '12' }>`
     font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '12px')};
   `,
-};
-
-export const ModalClothDetailForm = ({ dataSource }: Props) => {
-  return (
-    <Form.Wrapper>
-      <Form.Header>
-        <Typography size="16">{dataSource?.cloName}</Typography>
-        <Typography size="16">{dataSource?.cloSize}</Typography>
-      </Form.Header>
-      <Form.ImageWrapper>
-        <Form.Image src={dataSource?.imagePath} />
-      </Form.ImageWrapper>
-      <Form.BookingList>
-        <Typography size="12">예약상황</Typography>
-        <Form.BookingItem fontSize="12">{dataSource?.bookingList?.currentBooking_1}</Form.BookingItem>
-        <Form.BookingItem fontSize="12">{dataSource?.bookingList?.currentBooking_1}</Form.BookingItem>
-        <Form.BookingItem fontSize="12">{dataSource?.bookingList?.currentBooking_1}</Form.BookingItem>
-        <Typography size="12">외{dataSource?.bookingList?.extraBooking}건</Typography>
-      </Form.BookingList>
-    </Form.Wrapper>
-  );
 };

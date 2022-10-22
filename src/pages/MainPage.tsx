@@ -1,85 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
-import { useQuery } from '@tanstack/react-query';
 
-import { useGrid, useProductList } from '../hooks';
-import { CATEGORY, DEFAULT_PAGE, DEFAULT_SIZE, DETAIL_INFO } from '../constants';
+import { useGrid, usePaginationStore, useProductList } from '../hooks';
+import { CATEGORY, DEFAULT_SIZE, DETAIL_INFO } from '../constants';
 import type { Detail } from '../types';
-import axios from 'axios';
 
 import { Typography, Divider, Button, Row, Col, Card, Modal, ResponsiveSlider, ModalClothDetailForm } from '../components';
 
 export default function MainPage({}): React.ReactElement {
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [detailInfo, setDetailInfo] = useState<Detail | null>();
-  const [filter, setFilter] = useState<{ page: number; size: number; name?: string; category?: string }>({
-    page: DEFAULT_PAGE,
-    size: DEFAULT_SIZE,
-  });
+  const { span } = useGrid();
   const {
     colors: {
       neutral: { GREY, LIGHT_GREY, LIGHT_GREY_BLUE, WHITE, BLACK },
     },
   } = useTheme();
-  const { span } = useGrid();
 
-  const onClickHandelFilter = () => {
-    setFilter((prevFilter) => ({ ...prevFilter, size: prevFilter.size + DEFAULT_SIZE }));
+  const { size, setPagination } = usePaginationStore((state) => state);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [selectedProductId, setSelectedProductId] = useState<string>('');
+
+  const { error, isLoading, productList, refetch } = useProductList();
+
+  const onClickHandelFilter = async () => {
+    setPagination('size', size + DEFAULT_SIZE);
+    refetch();
+    window.scrollTo(0, document.body.scrollHeight);
   };
-
   const onChangeCategoryHandler = (value: string) => {
-    setFilter((prevFilter) => ({ ...prevFilter, category: value }));
+    setPagination('category', value);
+    refetch();
   };
 
   const onOpenModal = (id: string) => {
-    fetchClotheDetailInfo(id);
+    setSelectedProductId(id);
     setModalVisible(true);
   };
-
-  const fetchProductList = async () => {
-    return await axios
-      .get(`${'http://43.201.111.37:8216/simparty'}/main`, { params: filter })
-      .then((response) => response)
-      .catch((error) => error);
-  };
-
-  const { isLoading, data } = useQuery(['productList'], () => fetchProductList(), { keepPreviousData: true });
+  const onCloseModal = () => setModalVisible(false);
 
   const modalProps = {
     modalVisible,
-    title: '삭제하기',
-    dataSource: detailInfo,
+    title: '예약정보',
     onClose: () => {
-      setDetailInfo(null);
+      setSelectedProductId('');
       setModalVisible(false);
     },
     onSubmit: () => {
       setModalVisible(false);
     },
-    children: <ModalClothDetailForm dataSource={detailInfo} />,
+    children: <ModalClothDetailForm id={selectedProductId} />,
     footer: [
       {
-        onClick: () => setModalVisible(false),
-        text: '취소하기',
-        color: { border: LIGHT_GREY_BLUE, background: WHITE, textColor: BLACK },
-      },
-      {
-        onClick: () => setModalVisible(false),
-        text: '예약하기',
+        onClick: () => onCloseModal(),
+        text: '확인',
         color: { border: GREY, background: GREY, textColor: WHITE },
       },
     ],
   };
 
-  const fetchClotheDetailInfo = async (id: string) => {
-    const result = await axios.get(`http://43.201.111.37:8216/simparty/${id}`).then((response) => response.data);
-
-    setDetailInfo(result);
-  };
   return (
-    <S.Container>
-      <S.DetailInfo>
+    <MainPageStyle.Container>
+      <MainPageStyle.DetailInfo>
         <div className="image-container">
           <img src={`/images/SimParty.jpeg`} />
         </div>
@@ -90,8 +71,8 @@ export default function MainPage({}): React.ReactElement {
             <Button>팔로우</Button>
           </div>
           <div className="info--detail_info">
-            {DETAIL_INFO?.map(({ label, value }) => (
-              <div className="horizontal">
+            {DETAIL_INFO?.map(({ label, value }, index: number) => (
+              <div className="horizontal" key={`${value}-${index}`}>
                 <Typography size="18">{label}</Typography>
                 <Typography size="18" weight="600">
                   {value.toLocaleString()}
@@ -131,12 +112,12 @@ export default function MainPage({}): React.ReactElement {
             </Typography>
           </div>
         </div>
-      </S.DetailInfo>
+      </MainPageStyle.DetailInfo>
       <ResponsiveSlider item={CATEGORY} />
       <Category.Wrapper>
-        {CATEGORY?.map(({ label, value }) => (
+        {CATEGORY?.map(({ label, value }, index: number) => (
           <Category.Item
-            key={value}
+            key={`${value}-${index}`}
             onClick={() => onChangeCategoryHandler(value)}
             color={BLACK}
             borderColor={LIGHT_GREY_BLUE}
@@ -152,7 +133,7 @@ export default function MainPage({}): React.ReactElement {
         <span>로딩중</span>
       ) : (
         <Row gutter={[8, 8]}>
-          {data?.data?.map(({ cloName, thumbnailPath }: any, index: number) => (
+          {productList?.map(({ cloName, thumbnailPath }: any, index: number) => (
             <Col span={span} key={`${cloName}-${index}`}>
               <Card imageSource={thumbnailPath} onClick={onOpenModal} value={cloName} />
             </Col>
@@ -173,11 +154,11 @@ export default function MainPage({}): React.ReactElement {
         </Typography>
       </Button>
       <Modal {...modalProps} />
-    </S.Container>
+    </MainPageStyle.Container>
   );
 }
 
-const S = {
+const MainPageStyle = {
   Container: styled.div`
     width: 100%;
 

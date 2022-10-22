@@ -9,3 +9,11 @@ export interface Detail {
     extraBooking: number;
   };
 }
+export type PaginationKey = 'page' | 'size' | 'name' | 'category';
+export interface Pagination {
+  page: number;
+  size: number;
+  name?: string;
+  category?: string;
+  setPagination: <T extends string | number>(key: PaginationKey, value: T) => void;
+}
