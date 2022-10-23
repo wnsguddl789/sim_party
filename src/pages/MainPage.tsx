@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
 
 import { useGrid, usePaginationStore, useProductList } from '../hooks';
 import { CATEGORY, DEFAULT_SIZE, DETAIL_INFO } from '../constants';
-import type { Detail } from '../types';
 
 import { Typography, Divider, Button, Row, Col, Card, Modal, ResponsiveSlider, ModalClothDetailForm } from '../components';
 

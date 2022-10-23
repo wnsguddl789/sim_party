@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 
-import axios from 'axios';
 import axiosInstance from '../utils/api';
 
 export const useProductDetail = (id: string) => {
