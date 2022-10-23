@@ -6,6 +6,7 @@ import { BrowserRouter as RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from './context';
 import { LayoutProvider } from './components';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import 'antd/dist/antd.css';
 
 const rootElement = document.getElementById('root') as HTMLElement;
 const queryClient = new QueryClient();

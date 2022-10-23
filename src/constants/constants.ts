@@ -52,3 +52,5 @@ export const CATEGORY: Array<{ label: string; value: string }> = [
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_SIZE = 10;
 export const EMPTY_STRING = '';
+export const EMPTY_NUMBER = 0;
+export const DEFAULT_HH_MM_FORMAT = 'YYYY-MM-DD HH:mm:00';
